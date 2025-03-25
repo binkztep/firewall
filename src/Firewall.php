@@ -268,7 +268,8 @@ class Firewall
             if ($ip = $this->request->server('HTTP_CF_CONNECTING_IP')) {
                 $this->ip = $ip;
             } elseif ($ip = $this->request->server->get('HTTP_X_FORWARDED_FOR')) {
-                $this->ip = $ip;
+                $ipsArray = explode(',', $ip);
+                $this->ip = trim(reset($ipsArray));
             } elseif ($ip = $this->request->getClientIp()) {
                 $this->ip = $ip;
             }
