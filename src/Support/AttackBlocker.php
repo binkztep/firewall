@@ -3,6 +3,7 @@
 namespace PragmaRX\Firewall\Support;
 
 use Carbon\Carbon;
+use Exception;
 use PragmaRX\Firewall\Events\AttackDetected;
 use PragmaRX\Firewall\Firewall;
 
@@ -420,6 +421,16 @@ class AttackBlocker
     {
         $geo = $this->getGeo($this->ipAddress);
 
+        try {
+            $host = gethostbyaddr($this->ipAddress);
+        } catch (Exception $exception) {
+            $host = null;
+            $this->firewall->getLogger()->error('Invalid IP address (gethostbyaddr() error)', [
+                'ip' => $this->ipAddress,
+                'exception' => $exception,
+            ]);
+        }
+
         return [
             'type' => $type,
 
@@ -447,7 +458,7 @@ class AttackBlocker
 
             'country_code' => $geo ? $geo['country_code'] : null,
 
-            'host' => gethostbyaddr($this->ipAddress),
+            'host' => $host,
         ];
     }
 
