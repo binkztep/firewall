@@ -424,11 +424,11 @@ class AttackBlocker
         try {
             $host = gethostbyaddr($this->ipAddress);
         } catch (Exception $exception) {
-            $host = null;
             $this->firewall->getLogger()->error('Invalid IP address (gethostbyaddr() error)', [
                 'ip' => $this->ipAddress,
-                'exception' => $exception,
             ]);
+
+            throw $exception;
         }
 
         return [
